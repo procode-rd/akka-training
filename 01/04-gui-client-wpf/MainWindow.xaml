@@ -1,0 +1,104 @@
+﻿<Window x:Class="_04_gui_client_wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:_04_gui_client_wpf" xmlns:model="clr-namespace:_04_gui_client_wpf.Model" d:DataContext="{d:DesignInstance Type=model:MainWindowViewModel}"
+        xmlns:converters="clr-namespace:_04_gui_client_wpf.Conversion"
+        mc:Ignorable="d"
+        x:Name="Window"
+        Title="akka-training-4 gui client"
+        Height="450" Width="800">
+    <Window.Resources>
+    </Window.Resources>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" x:Name="MainMenu">
+            <MenuItem Header="File">
+                <MenuItem Header="Exit" Command="local:Commands.Exit"/>
+            </MenuItem>
+            <MenuItem Header="Remote">
+                <MenuItem Header="Connect" Command="local:Commands.Connect"/>
+            </MenuItem>
+        </Menu>
+        <Border DockPanel.Dock="Top" CornerRadius="3,3,3,3" BorderBrush="DarkGray">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Api Bridge:"/>
+                    <Label Content="{Binding ApiBridgePath}"/>
+                </StackPanel>
+                <ToolBar >
+                    <Button HorizontalAlignment="Right" Command="local:Commands.Connect">
+                        <TextBlock>Connect</TextBlock>
+                    </Button>
+                    <Button HorizontalAlignment="Right" Command="local:Commands.Disconnect" Margin="2,0,0,0">
+                        <TextBlock>Disconnect</TextBlock>
+                    </Button>
+                    <Button HorizontalAlignment="Right" Command="local:Commands.LoadDutyPlan" Margin="2,0,0,0">
+                        <TextBlock>Load DutyPlan</TextBlock>
+                    </Button>
+                </ToolBar>
+            </StackPanel>
+        </Border>
+
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem x:Name="Status" Content="{Binding Status}"></StatusBarItem>
+        </StatusBar>
+        <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ListBox x:Name="Log" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom" Height="100" 
+                     ItemsSource="{Binding LogLines}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"></TextBlock>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <DataGrid x:Name="DutyPlan" 
+                      ItemsSource="{Binding Path=Dutyplan.Employments}" 
+                      AutoGenerateColumns="False" 
+                      FrozenColumnCount="5" 
+                      IsReadOnly="True"
+                      HorizontalGridLinesBrush="LightGray"
+                      VerticalGridLinesBrush="LightGray">
+
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn x:Name="Name" Header="First Name">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" FontStyle="Italic" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn x:Name="Surname" Header="Surname">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Surname}" FontStyle="Italic" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn x:Name="Id" Header="Employee Number">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Id}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn x:Name="Absence" Header="Absence Balance">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Absence}" FontWeight="Bold" Foreground="LimeGreen" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn x:Name="Normtime" Header="Normtime">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Normtime}" FontWeight="Bold" Foreground="Orange" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+    </DockPanel>
+</Window>
