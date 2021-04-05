@@ -34,9 +34,9 @@ namespace _04_gui_client_wpf
             InitializeComponent();
 
             this.CommandBindings.Add(new CommandBinding(Commands.Exit, this.ExitCommand_Executed));
-            this.CommandBindings.Add(new CommandBinding(Commands.Connect, this.ConnectCommand_Executed, this.CanExecute_ConnectCommand));
-            this.CommandBindings.Add(new CommandBinding(Commands.Disconnect, this.DisconnectCommand_Executed, this.CanExecute_DisconnectCommand));
-            this.CommandBindings.Add(new CommandBinding(Commands.LoadDutyPlan, this.LoadDutyPlanCommand_Executed, this.CanExecute_LoadDutyPlanCommand));
+            this.CommandBindings.Add(new CommandBinding(Commands.Connect, this.ConnectCommand_Executed, (s, e) => e.CanExecute = this.model.IsDisconnected));
+            this.CommandBindings.Add(new CommandBinding(Commands.Disconnect, this.DisconnectCommand_Executed, (s, e) => e.CanExecute = this.model.IsConnected));
+            this.CommandBindings.Add(new CommandBinding(Commands.LoadDutyPlan, this.LoadDutyPlanCommand_Executed, (s, e) => e.CanExecute = this.model.IsConnected));
 
             this.actorSystemAdapter = new ActorSystemAdapter();
             this.model = new MainWindowViewModel();
@@ -44,6 +44,46 @@ namespace _04_gui_client_wpf
 
             this.apiService = new ApiService(this.actorSystemAdapter, this.model);
             this.apiService.LogLineGenerated += Model_LogLineGenerated;
+        }
+
+        private void Model_LogLineGenerated(object sender, string line)
+        {
+            this.Log.ScrollIntoView(line);
+        }
+
+        private void LoadDutyPlanCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var from = this.model.Dutyplan.From;
+            var to = this.model.Dutyplan.To;
+
+            this.SetupGridDayColumns(from, to);
+
+            this.apiService.InitiateLoadDutyPlan(
+                this.model.Dutyplan.OrganizationId,
+                this.model.Dutyplan.CustomerId,
+                from,
+                to);
+        }
+
+        private void DisconnectCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.apiService.Disconnect();
+        }
+
+        private void ConnectCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.apiService.Connect("localhost", 9000);
+        }
+
+        private void ExitCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        public void Dispose()
+        {
+            this.actorSystemAdapter?.Dispose();
+            this.actorSystemAdapter = null;
         }
 
         private void SetupGridDayColumns(DateTime from, DateTime to)
@@ -91,55 +131,20 @@ namespace _04_gui_client_wpf
             }
         }
 
-
-        private void Model_LogLineGenerated(object sender, string line)
+        private void DateFrom_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.Log.ScrollIntoView(line);
-        }
+            DateTime? now = ((DatePicker)sender).SelectedDate;
 
-        private void CanExecute_LoadDutyPlanCommand(object sender, CanExecuteRoutedEventArgs e) 
-            => e.CanExecute = this.model.IsConnected;
+            if (now == null)
+            {
+                return;
+            }
 
-        private void LoadDutyPlanCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            var from = DateTime.Now.AddDays(-8);
-            var to = DateTime.Now.AddDays(6);
-
-            this.SetupGridDayColumns(from, to);
-
-            this.apiService.InitiateLoadDutyPlan(
-                3, 4, from, to);
-        }
-
-        private void CanExecute_DisconnectCommand(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = this.model.IsConnected;
-        }
-
-        private void DisconnectCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            this.apiService.Disconnect();
-        }
-
-        private void CanExecute_ConnectCommand(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = !this.model.IsConnected;
-        }
-
-        private void ConnectCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            this.apiService.Connect("localhost", 9000);
-        }
-
-        private void ExitCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
-
-        public void Dispose()
-        {
-            this.actorSystemAdapter?.Dispose();
-            this.actorSystemAdapter = null;
+            if (DateTo.SelectedDate < now)
+            {
+                DateTo.SelectedDate = now.Value.AddDays(1);
+            }
+            DateTo.DisplayDateStart = now.Value.AddDays(1);
         }
     }
 }

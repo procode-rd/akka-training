@@ -81,9 +81,7 @@ namespace _04_gui_client_wpf
 
         public void InitiateLoadDutyPlan(long customerId, long organizationId, DateTime from, DateTime to)
         {
-            this.appModel?.Dispose();
-
-            this.appModel.Dutyplan = new DutyplanModel(3, 4, from, to);
+            this.appModel.Dutyplan.Employments.Clear();
 
             this.SendApiRequest(new LoadDutyplanRequest(customerId, organizationId, from, to));
         }
