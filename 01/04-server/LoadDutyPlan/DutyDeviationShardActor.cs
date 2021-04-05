@@ -74,6 +74,12 @@ namespace _04_server.LoadDutyPlan
                             duty.Deviations = deviations.ToArray();
                             duties.Add(duty);
 
+                            // send back
+                            requestContext.Origin.Tell(new ApiResponse<LoadDutyplanRequest, DutyShard[]>(
+                                request,
+                                success: true,
+                                new[] { duty }));
+
                             stamp = stamp.AddDays(1);
                         }
                     }
@@ -81,9 +87,6 @@ namespace _04_server.LoadDutyPlan
                     return duties.ToArray();
                 }, 
                 this.CallerName(requestContext.Request.Id));
-
-            // send data to requester
-            requestContext.Origin.Tell(response);
 
             // send info to sender
             this.Sender.Tell(response);

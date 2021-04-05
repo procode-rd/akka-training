@@ -42,16 +42,20 @@ namespace _04_server.LoadDutyPlan
                         {
                             var stamp = requestContext.Request.From.AddDays(i);
 
-                            values.Add(this.Repo.Get(new { employmentId, stamp }));
+                            var frame = this.Repo.Get(new { employmentId, stamp });
+                            values.Add(frame);
+
+                            // send back
+                            requestContext.Origin.Tell(new ApiResponse<LoadDutyplanRequest, ValidationFrame[]>(
+                                request,
+                                success: true,
+                                new[] { frame }));
                         }
                     }
 
                     return values.ToArray();
                 }, 
                 this.CallerName(requestContext.Request.Id));
-
-            // send back
-            requestContext.Origin.Tell(response);
 
             // send info to sender
             this.Sender.Tell(response);

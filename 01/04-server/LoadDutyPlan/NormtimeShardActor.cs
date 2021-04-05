@@ -39,15 +39,20 @@ namespace _04_server.LoadDutyPlan
 
                     foreach (long employmentId in requestContext.Context)
                     {
-                        values.Add(this.Repo.Get(new { employmentId }));
+                        var item = this.Repo.Get(new { employmentId });
+                        values.Add(item);
+
+                        // send back
+                        requestContext.Origin.Tell(new ApiResponse<LoadDutyplanRequest, ValueShard[]>(
+                            request,
+                            success: true,
+                            new[] { item }));
                     }
 
                     return values.ToArray();
                 }, 
                 this.CallerName(requestContext.Request.Id));
 
-            // send back
-            requestContext.Origin.Tell(response);
 
             // send info to sender
             this.Sender.Tell(response);
