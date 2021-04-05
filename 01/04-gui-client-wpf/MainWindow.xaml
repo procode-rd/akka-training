@@ -62,6 +62,8 @@
                       AutoGenerateColumns="False" 
                       FrozenColumnCount="5" 
                       IsReadOnly="True"
+                      EnableColumnVirtualization="True"
+                      EnableRowVirtualization="True"
                       HorizontalGridLinesBrush="LightGray"
                       VerticalGridLinesBrush="LightGray">
 
