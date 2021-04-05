@@ -23,7 +23,7 @@ namespace _04_server.LoadDutyPlan
             => Props.Create(typeof(NormtimeShardActor));
 
         public NormtimeShardActor()
-            : base(10, 50, NewDtoDecorator)
+            : base(20, 50, NewDtoDecorator)
         {
             this.Receive<ApiRequestContext<LoadDutyplanRequest, long[]>>(this.HandleLoadDutyplanRequest);
         }
