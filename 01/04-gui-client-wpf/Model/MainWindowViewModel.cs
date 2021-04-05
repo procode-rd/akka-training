@@ -28,16 +28,25 @@ namespace _04_gui_client_wpf.Model
             this.Status = "Ready to connect";
             this.ApiBridgePath = "(connect first)";
 
-            this.Dutyplan = default;
+            this.Dutyplan = new DutyplanModel(-1, -1, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7));
             this.LogLines = new ObservableCollection<string>();
         }
         
         // bound props
 
+        public bool IsDisconnected
+        {
+            get => !this.IsConnected;
+        }
+
         public bool IsConnected
         {
             get => this.Get<bool>();
-            set => this.Set(value);
+            set
+            {
+                this.Set(value);
+                this.EmitPropertiesChanged(nameof(IsDisconnected));
+            }
         }
 
         public string Status

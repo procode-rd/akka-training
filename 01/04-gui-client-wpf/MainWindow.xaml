@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_04_gui_client_wpf" xmlns:model="clr-namespace:_04_gui_client_wpf.Model" d:DataContext="{d:DesignInstance Type=model:MainWindowViewModel}"
         xmlns:converters="clr-namespace:_04_gui_client_wpf.Conversion"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         x:Name="Window"
         Title="akka-training-4 gui client"
@@ -16,30 +17,33 @@
             <MenuItem Header="File">
                 <MenuItem Header="Exit" Command="local:Commands.Exit"/>
             </MenuItem>
-            <MenuItem Header="Remote">
-                <MenuItem Header="Connect" Command="local:Commands.Connect"/>
-            </MenuItem>
         </Menu>
         <Border DockPanel.Dock="Top" CornerRadius="3,3,3,3" BorderBrush="DarkGray">
             <StackPanel>
+                <ToolBar >
+                    <Button HorizontalAlignment="Right" Content="Connect" Command="local:Commands.Connect" IsEnabled="{Binding IsDisconnected}"/>
+                    <Button HorizontalAlignment="Right" Content="Disconnect" Command="local:Commands.Disconnect" IsEnabled="{Binding IsConnected}"/>
+                    <Separator/>
+                    <Label Content="_Range:"/>
+                    <DatePicker Name="DateFrom" 
+                                SelectedDate="{Binding Dutyplan.From}" 
+                                SelectedDateChanged="DateFrom_SelectedDateChanged"
+                                IsEnabled="{Binding IsConnected}"/>
+                    <TextBox>-</TextBox>
+                    <DatePicker Name="DateTo" 
+                                SelectedDate="{Binding Dutyplan.To}" 
+                                IsEnabled="{Binding IsConnected}" />
+
+                    <Button HorizontalAlignment="Right" Content="Load DutyPlan" Command="local:Commands.LoadDutyPlan" IsEnabled="{Binding IsConnected}"/>
+                    <Separator/>
+                </ToolBar>
                 <StackPanel Orientation="Horizontal">
-                    <Label Content="Api Bridge:"/>
+                    <Label Content="Api Bridge:" FontWeight="DemiBold"/>
                     <Label Content="{Binding ApiBridgePath}"/>
                 </StackPanel>
-                <ToolBar >
-                    <Button HorizontalAlignment="Right" Command="local:Commands.Connect">
-                        <TextBlock>Connect</TextBlock>
-                    </Button>
-                    <Button HorizontalAlignment="Right" Command="local:Commands.Disconnect" Margin="2,0,0,0">
-                        <TextBlock>Disconnect</TextBlock>
-                    </Button>
-                    <Button HorizontalAlignment="Right" Command="local:Commands.LoadDutyPlan" Margin="2,0,0,0">
-                        <TextBlock>Load DutyPlan</TextBlock>
-                    </Button>
-                </ToolBar>
+
             </StackPanel>
         </Border>
-
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBarItem x:Name="Status" Content="{Binding Status}"></StatusBarItem>
         </StatusBar>

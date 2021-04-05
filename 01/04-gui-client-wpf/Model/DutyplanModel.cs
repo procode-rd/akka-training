@@ -42,13 +42,13 @@ namespace _04_gui_client_wpf.Model
         public DateTime From
         {
             get => this.Get<DateTime>();
-            private set => this.Set(value);
+            set => this.Set(value);
         }
 
         public DateTime To
         {
             get => this.Get<DateTime>();
-            private set => this.Set(value);
+            set => this.Set(value);
         }
 
         // api
