@@ -23,7 +23,7 @@ namespace _04_server.LoadDutyPlan
             => Props.Create(typeof(AbsenceShardActor));
 
         public AbsenceShardActor()
-            : base(10, 100, NewDtoDecorator)
+            : base(20, 100, NewDtoDecorator)
         {
             this.Receive<ApiRequestContext<LoadDutyplanRequest, long[]>>(this.HandleLoadDutyplanRequest);
         }
