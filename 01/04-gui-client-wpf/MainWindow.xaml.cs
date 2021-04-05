@@ -43,7 +43,7 @@ namespace _04_gui_client_wpf
             this.DataContext = this.model;
 
             this.apiService = new ApiService(this.actorSystemAdapter, this.model);
-            this.apiService.LogLineGenerated += Model_LogLineGenerated;
+            // this.apiService.LogLineGenerated += Model_LogLineGenerated;
         }
 
         private void SetupGridDayColumns(DateTime from, DateTime to)
